@@ -38,8 +38,14 @@ export const Register = async (req, res) => {
           return res.json({ message: 'User already exists' });
       }
   } catch (error) {
-      console.error('Failed to register user:', error);
-      res.status(500).json({ error: 'Failed to register user.' });
+      if (error.code === 11000) {
+        // Duplicate key error occurred (email or username already exists)
+        return res.json({ message: 'Something went wrong. Please try again later.' });
+      } else {
+        // Other error occurred
+        console.error('Failed to register user:', error);
+        return res.status(500).json({ error: 'Failed to register user.' });
+      }
   }
 };
 
